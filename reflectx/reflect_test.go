@@ -296,7 +296,7 @@ func TestRecursiveStruct(t *testing.T) {
 }
 
 func TestFieldsEmbedded(t *testing.T) {
-	m := NewMapper("db")
+	m := NewMapperFunc("db", strings.ToLower)
 
 	type Person struct {
 		Name string `db:"name,size=64"`
