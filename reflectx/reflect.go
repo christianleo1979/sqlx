@@ -187,6 +187,7 @@ func (m *Mapper) TraversalsByNameFunc(t reflect.Type, names []string, fn func(in
 	mustBe(t, reflect.Struct)
 	tm := m.TypeMap(t)
 	for i, name := range names {
+		name = m.mapFunc(name)
 		fi, ok := tm.Names[name]
 		if !ok {
 			if err := fn(i, nil); err != nil {
