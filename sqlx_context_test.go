@@ -1,3 +1,4 @@
+//go:build go1.8
 // +build go1.8
 
 // The following environment variables, if set, will be used:
@@ -22,8 +23,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/christianleo1979/sqlx/reflectx"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/jmoiron/sqlx/reflectx"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -434,7 +435,7 @@ func TestNamedQueryContext(t *testing.T) {
 			);
 			CREATE TABLE jsperson (
 				"FIRST" text NULL,
-				last_name text NULL,
+				"LAST" text NULL,
 				"EMAIL" text NULL
 			);`,
 		drop: `
@@ -489,7 +490,7 @@ func TestNamedQueryContext(t *testing.T) {
 
 		type JSONPerson struct {
 			FirstName sql.NullString `json:"FIRST"`
-			LastName  sql.NullString `json:"last_name"`
+			LastName  sql.NullString `json:"LAST"`
 			Email     sql.NullString
 		}
 
@@ -511,7 +512,7 @@ func TestNamedQueryContext(t *testing.T) {
 			return s
 		}
 
-		q1 = `INSERT INTO jsperson ("FIRST", last_name, "EMAIL") VALUES (:FIRST, :last_name, :EMAIL)`
+		q1 = `INSERT INTO jsperson ("FIRST", "LAST", "EMAIL") VALUES (:FIRST, :LAST, :EMAIL)`
 		_, err = db.NamedExecContext(ctx, pdb(q1, db), jp)
 		if err != nil {
 			t.Fatal(err, db.DriverName())
@@ -541,7 +542,7 @@ func TestNamedQueryContext(t *testing.T) {
 			SELECT * FROM jsperson
 			WHERE
 				"FIRST"=:FIRST AND
-				last_name=:last_name AND
+				"LAST"=:LAST AND
 				"EMAIL"=:EMAIL
 		`, db))
 
@@ -561,7 +562,7 @@ func TestNamedQueryContext(t *testing.T) {
 			SELECT * FROM jsperson
 			WHERE
 				"FIRST"=:FIRST AND
-				last_name=:last_name AND
+				"LAST"=:LAST AND
 				"EMAIL"=:EMAIL
 		`, db), jp)
 		if err != nil {
